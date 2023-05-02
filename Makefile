@@ -1,0 +1,53 @@
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# TODO(b:281404554): Upgrade to blaze.
+
+SRCDIR := $(shell pwd)
+GENERATED = ${SRCDIR}/generated
+PROTO = ${SRCDIR}/proto
+
+# Protobuf binary code.
+GENERATED_DESCPB_BIN = ${GENERATED}/descpb.bin
+
+# All the features starlak files to be processed.
+FEATURES_BINARIES = $(patsubst ${SRCDIR}/%.star, \
+		      ${GENERATED}/%.binary, \
+		      $(wildcard ${SRCDIR}/*features.star))
+
+# Binary version of the database with all feature descriptions.
+GENERATED_FEATURE_BIN = ${GENERATED}/features_final.binary
+
+# Generated .h file from the database for libsegmentation.
+GENERATED_LIGSEGMENTATION_PB_H = ${GENERATED}/libsegmentation_pb.h
+
+# Verbose? Use V=1
+ifeq ($(filter-out 0,${V}),)
+Q := @
+endif
+
+# Default target.
+.PHONY: all
+all: ${GENERATED_LIGSEGMENTATION_PB_H}
+
+${GENERATED_DESCPB_BIN} : ${GENERATED} $(wildcard ${PROTO}/*.proto)
+	${Q}/usr/bin/protoc -I${PROTO} --descriptor_set_out=$@ $(filter-out $<,$^)
+
+${GENERATED}/%.binary : %.star ${GENERATED_DESCPB_BIN}
+	${Q}/usr/bin/lucicfg generate $<
+
+${GENERATED_FEATURE_BIN} : ${FEATURES_BINARIES}
+	${Q}/bin/cat $^ > $@
+
+${GENERATED_LIGSEGMENTATION_PB_H} : ${GENERATED_FEATURE_BIN}
+	${Q}${SRCDIR}/generate_include_file.sh $@ \
+		$(foreach f,$^, ${f} $(patsubst ${GENERATED}/%_final.binary, \
+				       protobuf_% ,${f}))
+
+.PHONY: clean
+clean:
+	${Q}/bin/rm -rf ${GENERATED}
+
+${GENERATED}:
+	${Q}mkdir -p $@

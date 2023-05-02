@@ -1,1 +1,1 @@
-include chromiumos/platform2:/libsegmentation/OWNERS
+include chromiumos/owners:v1:/platform/OWNERS.segmentation

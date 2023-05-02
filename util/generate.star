@@ -1,15 +1,19 @@
+# Copyright 2023 The ChromiumOS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
 """Functions to generate proto payloads."""
 
-def _generate_include(features, output = "output.txt"):
-    """Serializes a featureBundle to a file.
+def _generate_include(bundle, output = "output.txt"):
+    """Serializes a Bundle to a file.
 
     A json proto is written. Note that there is some post processing done
-    by the gen_feature script to convert this json output into a json
+    by the generate_include_file.sh script to convert this json output into a json
     output that uses ints for encoding enums.
     """
 
     def _generate_impl(ctx):
-        ctx.output[output] = proto.to_wirepb(features)
+        ctx.output[output] = proto.to_wirepb(bundle)
 
     lucicfg.generator(impl = _generate_impl)
 

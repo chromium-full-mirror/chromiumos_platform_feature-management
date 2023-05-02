@@ -2,7 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-load("//util/proto.star", "protos")
+"""Functions to generate feature protobuf"""
+
 load(
     "@proto//feature_management.proto",
     feature_pb = "chromiumos.feature_management.api.software",
