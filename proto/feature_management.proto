@@ -23,8 +23,11 @@ message Feature {
 
   // Device set where the feature is available.
   enum Scope {
-    SCOPE_DEVICES_0 = 0;
-    SCOPE_DEVICES_1 = 1;
+    option allow_alias = true;
+    SCOPE_UNSPECIFIED = 0;
+    SCOPE_DEVICES_VALID_OFFSET = 1;
+    SCOPE_DEVICES_0 = 1;
+    SCOPE_DEVICES_1 = 2;
   }
   repeated Scope scopes = 4;
 
@@ -32,9 +35,10 @@ message Feature {
   // Local usage via C++ is implied.
   // Setting chrome and android allows the feature to be seen in each.
   enum Usage {
-    USAGE_LOCAL = 0;
-    USAGE_CHROME = 1;
-    USAGE_ANDROID = 2;
+    USAGE_UNSPECIFIED = 0;
+    USAGE_LOCAL = 1;
+    USAGE_CHROME = 2;
+    USAGE_ANDROID = 3;
   }
   repeated Usage usages = 5;
 
