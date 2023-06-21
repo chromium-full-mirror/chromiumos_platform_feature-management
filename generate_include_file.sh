@@ -33,9 +33,9 @@ while [ "${i}" -lt $# ]; do
   i=$((i + 1))
 
   if [ -e "${in}" ]; then
-    echo "  const char* ${key} = \"$(base64 -w 0 < "${in}")\";" >> "${out}"
+    echo "  const char ${key}[] = \"$(base64 -w 0 < "${in}")\";" >> "${out}"
   else
-    echo "  const char* ${key} = \"\";"
+    echo "  const char ${key}[] = \"\";"
   fi
 done
 
