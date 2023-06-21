@@ -28,9 +28,9 @@ def _create_hwid_requirement(bit_locations, values):
 def _append_hwid_requirement(hwid_requirements, hwid_requirement):
     hwid_requirements.append(hwid_requirement)
 
-def _create_hwid_profile(prefix, requirements):
+def _create_hwid_profile(prefixes, requirements):
     return hwid_feature_pb.HwidProfile(
-        prefix = prefix,
+        prefixes = prefixes,
         encoding_requirements = requirements,
     )
 

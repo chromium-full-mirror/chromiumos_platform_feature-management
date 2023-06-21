@@ -13,7 +13,7 @@ package chromiumos.feature_management.api.software;
 message HwidProfile {
   // Start of the HWID to match. We need a match to continue, but we can also
   // match on the prefix only.
-  string prefix = 1;
+  repeated string prefixes = 1;
 
   // One single requirement for the encoded HWID bit string.
   //
