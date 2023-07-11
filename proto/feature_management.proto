@@ -23,9 +23,7 @@ message Feature {
 
   // Device set where the feature is available.
   enum Scope {
-    option allow_alias = true;
     SCOPE_UNSPECIFIED = 0;
-    SCOPE_DEVICES_VALID_OFFSET = 1;
     SCOPE_DEVICES_0 = 1;
     SCOPE_DEVICES_1 = 2;
   }
