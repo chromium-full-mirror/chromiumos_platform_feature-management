@@ -7,6 +7,7 @@
 SRCDIR := $(shell pwd)
 GENERATED = ${SRCDIR}/generated
 PROTO = ${SRCDIR}/proto
+DEVICES = ${SRCDIR}/devices
 
 # Protobuf binary code.
 GENERATED_DESCPB_BIN = ${GENERATED}/descpb.bin
@@ -19,10 +20,8 @@ FEATURES_BINARIES = $(patsubst ${SRCDIR}/%.star, \
 # Binary version of the database with all feature descriptions.
 GENERATED_FEATURE_BIN = ${GENERATED}/features_final.binary
 
-# All the devices starlak files to be processed.
-DEVICES_BINARIES = $(patsubst ${SRCDIR}/%.star, \
-		      ${GENERATED}/%.binary, \
-		      $(wildcard ${SRCDIR}/*devices.star))
+# protobuf describing the device selections.
+DEVICES_SELECTIONS = $(wildcard ${DEVICES}/*textproto)
 
 # Binary version of the database with all feature descriptions.
 GENERATED_DEVICE_BIN = ${GENERATED}/devices_final.binary
@@ -48,14 +47,16 @@ ${GENERATED}/%.binary : %.star ${GENERATED_DESCPB_BIN}
 ${GENERATED_FEATURE_BIN} : ${FEATURES_BINARIES}
 	${Q}/bin/cat $^ > $@
 
-${GENERATED_DEVICE_BIN} : ${DEVICES_BINARIES}
-	${Q}/bin/cat $^ > $@
+${GENERATED_DEVICE_BIN} : ${DEVICES_SELECTIONS}
+	${Q}/bin/cat $^ | protoc -I "./proto" --protobuf_out=$@ \
+	--encode=chromiumos.feature_management.api.software.SelectionBundle \
+	device_selection.proto
 
 ${GENERATED_LIGSEGMENTATION_PB_H} : ${GENERATED_FEATURE_BIN} \
 	                                  ${GENERATED_DEVICE_BIN}
 	${Q}${SRCDIR}/generate_include_file.sh $@ \
-		$(foreach f,$^, ${f} $(patsubst ${GENERATED}/%_final.binary, \
-				       protobuf_% ,${f}))
+	$(foreach f,$^, ${f} $(patsubst ${GENERATED}/%_final.binary, \
+			       protobuf_% ,${f}))
 
 .PHONY: clean
 clean:
