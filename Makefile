@@ -38,7 +38,7 @@ endif
 .PHONY: all
 all: ${GENERATED_LIGSEGMENTATION_PB_H}
 
-${GENERATED_DESCPB_BIN} : ${GENERATED} $(wildcard ${PROTO}/*.proto)
+${GENERATED_DESCPB_BIN} : $(wildcard ${PROTO}/*.proto) | ${GENERATED}
 	${Q}/usr/bin/protoc -I${PROTO} --descriptor_set_out=$@ $(filter-out $<,$^)
 
 ${GENERATED}/%.binary : %.star ${GENERATED_DESCPB_BIN}
@@ -47,7 +47,7 @@ ${GENERATED}/%.binary : %.star ${GENERATED_DESCPB_BIN}
 ${GENERATED_FEATURE_BIN} : ${FEATURES_BINARIES}
 	${Q}/bin/cat $^ > $@
 
-${GENERATED_DEVICE_BIN} : ${DEVICES_SELECTIONS}
+${GENERATED_DEVICE_BIN} : ${DEVICES_SELECTIONS} | ${GENERATED}
 	${Q}/bin/cat $^ | protoc -I "./proto" --protobuf_out=$@ \
 	--encode=chromiumos.feature_management.api.software.SelectionBundle \
 	device_selection.proto
