@@ -48,9 +48,9 @@ ${GENERATED_FEATURE_BIN} : ${FEATURES_BINARIES}
 	${Q}/bin/cat $^ > $@
 
 ${GENERATED_DEVICE_BIN} : ${DEVICES_SELECTIONS} | ${GENERATED}
-	${Q}/bin/cat $^ | protoc -I "./proto" --protobuf_out=$@ \
+	${Q}/bin/cat $^ | protoc -I "./proto" \
 	--encode=chromiumos.feature_management.api.software.SelectionBundle \
-	device_selection.proto
+	device_selection.proto > $@
 
 ${GENERATED_LIGSEGMENTATION_PB_H} : ${GENERATED_FEATURE_BIN} \
 	                                  ${GENERATED_DEVICE_BIN}
